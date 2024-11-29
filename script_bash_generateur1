@@ -1,0 +1,20 @@
+#!/bin/bash
+
+mkdir -p textes_gen1
+
+# Génération des textes
+for alphabet_size in 2 4 20 70; do
+    ./generateur_mots "textes_500000/text_${alphabet_size}.txt" 1 500000 $alphabet_size
+done
+
+# # Génération des mots
+# for length in 4 5 6 7 8 9 10 15 20 30 40 50; do
+#     ./generateur_mots generate_words "words_${length}.txt" 100 $length 20
+# done
+
+# Lancer les recherches
+#for alphabet_size in 2 4 20 70; do
+#    for length in 4 5 6 7 8 9 10 15 20 30 40 50; do
+#        ./bin/main search "text_${alphabet_size}.txt" "words_${length}.txt" >> results/results_${alphabet_size}_${length}.txt
+#    done
+#done
