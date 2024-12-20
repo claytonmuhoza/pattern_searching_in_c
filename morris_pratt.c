@@ -2,44 +2,42 @@
 #include <stdlib.h>
 #include <string.h>
 #include "morris_pratt.h"
-int *bon_pref(char *x){
-    int m = strlen(x);
-    int *bon_pref = (int *)malloc(m * sizeof(int));
-    //bon pref de x[0] est -1
-    bon_pref[0] = -1;
-    int i = 0;
-    int j = -1;
-    //bon pref de x[i] est egale a la longueur du plus long prefixe de x[0..i-1] qui est aussi un suffixe de x[0..i-1]
-    while (i < m){
-        //on cherche le plus long prefixe de x[0..i-1] qui est aussi un suffixe de x[0..i-1]
-        while (j > -1 && x[i] != x[j]){
-            j = bon_pref[j];
-        }
-        i++;
-        j++;
-        bon_pref[i] = j;
+
+// Fonction pour construire le tableau des bons préfixes
+void tabBonPref(char *x, int m, int mpNext[]) {
+    int i, j;
+
+    i = 0;
+    j = mpNext[0] = -1; // Initialisation
+    while (i < m) {
+        while (j > -1 && x[i] != x[j]) // Trouver le plus long préfixe qui est aussi un suffixe
+            j = mpNext[j];
+        mpNext[++i] = ++j; // Mettre à jour le tableau mpNext
     }
-    return bon_pref;
 }
 
-int morris_pratt(char *texte, char *mot){
-    int n = strlen(texte);
-    int m = strlen(mot);
-    int *bon_pref_mot = bon_pref(mot);
-    int i = 0;
-    int j = 0;
-    int n_occurence = 0;
-    while (i < n){
-        while (j > -1 && texte[i] != mot[j]){
-            j = bon_pref_mot[j];
-        }
-        i++;
-        j++;
-        if (j == m){
-            n_occurence++;
-            j = bon_pref_mot[j];
-        }
-    }
-    free(bon_pref_mot);
-    return n_occurence;
+// Fonction pour l'algorithme de recherche de Morris-Pratt
+int morris_pratt(char *texte, char *mot) {
+     int i, j, m, n, mpNext[256];
+     int occurence = 0;
+
+     m = strlen(mot); // Longueur du motif
+     n = strlen(texte); // Longueur du texte
+
+     // Prétraitement
+     tabBonPref(mot, m, mpNext);
+
+     // Recherche
+     i = j = 0;
+     while (j < n) {
+          while (i > -1 && mot[i] != texte[j]) // Comparer les caractères du motif et du texte
+                i = mpNext[i];
+          i++;
+          j++;
+          if (i >= m) { // Motif trouvé
+                occurence++;
+                i = mpNext[i]; // Continuer la recherche
+          }
+     }
+     return occurence; // Retourner le nombre d'occurrences trouvées
 }

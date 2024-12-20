@@ -1,48 +1,41 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-int *dern_occurance(char *mot) {
-    int m = strlen(mot);
-    int *dern_occurance = (int *)malloc(256 * sizeof(int));
-    for (int i = 0; i < 256; i++) {
-        dern_occurance[i] = -1;
-    }
-    for (int i = 0; i < m -1; i++) {
-        dern_occurance[mot[i]] = m - 1- i;
-    }
-    return dern_occurance;
+#include "horspool.h"
+
+// Fonction pour calculer la dernière occurrence des caractères
+void dern_occ(char *x, int m, int bmBc[]) {
+    int i;
+ 
+    // Initialisation du tableau avec la longueur du motif
+    for (i = 0; i < 256; ++i)
+        bmBc[i] = m;
+    // Mise à jour des positions des caractères du motif
+    for (i = 0; i < m - 1; ++i)
+        bmBc[(unsigned char)x[i]] = m - i - 1;
 }
-int horspool(char *texte, char *mot) {
-    int n = strlen(texte);
-    int m = strlen(mot);
-    int *dern_occurance_mot = dern_occurance(mot);
-    int i = 0;
-    int n_occurence = 0;
-    while (i <= n - m) {
-        int j = m - 1;
-        while (j >= 0 && texte[i + j] == mot[j]) {
-            j--;
-        }
-        if (j == -1) {
-            n_occurence++;
-            i++;
-        } else {
-            i += dern_occurance_mot[texte[i + m - 1]];
-        }
-    }
-    free(dern_occurance_mot);
-    return n_occurence;
-}
-void main()
-{
-    char text[] = "babbababbabbababbababbabbababbabbababbababbabbababbababbabbababbabbababbababbabbababbabbababbababbabbababbababbabbababbabbababbababbabbababbababbabbababbabbababbababbabbababbabbababbababbabbababbababb";
-    char word[] = "ab";
-    //afficher dern occurance
-    int *dern_occurance_mot = dern_occurance(word);
-    for (int i = 0; i < 256; i++) {
-        if (dern_occurance_mot[i] != -1) {
-            printf("dern occurance de %c est %d\n", i, dern_occurance_mot[i]);
-        }
-    }
-    printf("occurence %d\n", horspool(text, word));
+
+// Fonction de recherche utilisant l'algorithme de Horspool
+int horspool(char *x, char *y) {
+     int m = strlen(y); // Longueur du motif
+     int n = strlen(x); // Longueur du texte
+     int j, bmBc[256];
+     char c;
+     int count = 0;
+
+     // Prétraitement
+     dern_occ(y, m, bmBc);
+
+     // Recherche
+     j = 0;
+     while (j <= n - m) {
+          c = x[j + m - 1];
+          // Vérification du caractère et comparaison du motif
+          if (y[m - 1] == c && memcmp(y, x + j, m) == 0)
+                count++;
+          // Calcul du décalage
+          j += bmBc[(unsigned char)c];
+     }
+
+     return count; // Retourne le nombre de correspondances trouvées
 }

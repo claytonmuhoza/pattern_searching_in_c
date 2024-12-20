@@ -4,24 +4,26 @@
 #include "algorithme_recherche_naif.h"
 // fonction de recherche naive avec boucle interne sans boucle rapide et sans sentinelle
 int recherche_naive_boucle_interne_sans_boucle_rapide_sans_sentinelle(char *texte, char *mot) {
-    int len_texte = strlen((const char*)texte);
-    int len_mot = strlen((const char*)mot);
-    int n_occurence =  0;
+    int len_texte = strlen(texte);
+    int len_mot = strlen(mot);
+    int n_occurence = 0;
     int i = 0;
-    while(i <= len_texte - len_mot) {
-        int j=0;
-        while(j<len_mot && texte[i+j]==mot[j])
-        {
+
+    while (i <= len_texte - len_mot) {
+        int j = 0;
+        while (j < len_mot && texte[i + j] == mot[j]) {
             j++;
         }
         if (j == len_mot) {
-            n_occurence+=1;
+            n_occurence++;
         }
         i++;
     }
+
     return n_occurence;
 }
 // fonction de recherche naive avec boucle rapide sans sans sentinelle
+
 int recherche_naive_boucle_rapide_sans_sentinelle(char *texte, char *mot) {
     int len_texte = strlen(texte);
     int len_mot = strlen(mot);
@@ -54,6 +56,7 @@ int recherche_naive_boucle_rapide_sans_sentinelle(char *texte, char *mot) {
     }
     return n_occurence;
 }
+
 
 // fonction de recherche naive avec boucle interne, boucle r et boucle rapide
 int recherche_naive_boucle_rapide_sentinelle(char *texte, char *mot) {
@@ -95,9 +98,9 @@ int recherche_naive_boucle_rapide_sentinelle(char *texte, char *mot) {
     }
 
     free(texte_sentinelle);
-    //comme le mot rechercher est placé à la fin du texte, on doit enlever une occurence
     return n_occurence - 1;
 }
+
 
 
 // fonction de recherche naive avec la fonction strncmp sans boucle rapide et sans sentinelle
@@ -105,12 +108,15 @@ int recherche_naive_strncmp(char *texte, char *mot) {
     int len_texte = strlen(texte);
     int len_mot = strlen(mot);
     int n_occurence = 0;
+    int i = 0;
 
-    for (int i = 0; i <= len_texte - len_mot; i++) {
-        if (strncmp(&texte[i], mot, len_mot) == 0) {
+    while (i <= len_texte - len_mot) {
+        if (strncmp(texte + i, mot, len_mot) == 0) {
             n_occurence++;
         }
+        i++;
     }
+
     return n_occurence;
 }
 // fonction de recherche naive avec la fonction strncmp avec boucle rapide et sans sentinelle
@@ -118,15 +124,26 @@ int recherche_naive_strncmp_rapide(char *texte, char *mot) {
     int len_texte = strlen(texte);
     int len_mot = strlen(mot);
     int n_occurence = 0;
+    int i = 0;
 
-    for (int i = 0; i <= len_texte - len_mot;) {
-        if (strncmp(&texte[i], mot, len_mot) == 0) {
+    while (i <= len_texte - len_mot) {
+        if (strncmp(texte + i, mot, len_mot) == 0) { // Comparaison via strncmp
             n_occurence++;
-            i += len_mot; // Boucle rapide
+
+            // Recherche du prochain point d'avancement
+            int next_possible = 1; // Par défaut, avancer d'un caractère
+            for (int k = 1; k < len_mot; k++) {
+                if (texte[i + len_mot - k] == mot[0]) {
+                    next_possible = len_mot - k;
+                    break;
+                }
+            }
+            i += next_possible;
         } else {
-            i++;
+            i++; // Si pas de correspondance, avancer d'un caractère
         }
     }
+
     return n_occurence;
 }
 // fonction de recherche naive avec la fonction strncmp avec boucle rapide et avec sentinelle
@@ -142,14 +159,23 @@ int recherche_naive_strncmp_sentinelle(char *texte, char *mot) {
 
     int i = 0;
     while (i <= len_texte) {
-        if (strncmp(&texte_sentinelle[i], mot, len_mot) == 0) {
+        if (strncmp(texte_sentinelle + i, mot, len_mot) == 0) { // Comparaison via strncmp
             n_occurence++;
-            i += len_mot; // Boucle rapide
+
+            // Calcul du prochain saut
+            int next_possible = 1;
+            for (int k = 1; k < len_mot; k++) {
+                if (texte_sentinelle[i + len_mot - k] == mot[0]) {
+                    next_possible = len_mot - k;
+                    break;
+                }
+            }
+            i += next_possible;
         } else {
             i++;
         }
     }
 
     free(texte_sentinelle);
-    return n_occurence;
+    return n_occurence - 1;
 }

@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+
+// Fonction pour générer des mots aléatoires et les écrire dans un fichier
 void generateursMots(const char *fichier, int nb_mots, int longueur_mot, int taille_alphabet) {
     FILE *fp = fopen(fichier, "w");
     for (int i = 0; i < nb_mots; i++) {
         for (int j = 0; j < longueur_mot; j++) {
-            
             char c = '0' + (rand() % taille_alphabet);
-            
             fputc(c, fp);
         }
-        fputc('\n', fp);
+        if (i != 1)
+            fputc('\n', fp);
     }
     fclose(fp);
 }
@@ -28,7 +29,7 @@ int main(int argc, char *argv[]) {
     int alphabet_size = atoi(argv[4]); // Convertir en entier
 
     // Vérification des valeurs valides
-    if (length <= 0 || alphabet_size <= 0 ) {
+    if (length <= 0 || alphabet_size <= 0) {
         fprintf(stderr, "Erreur : longueur et taille_alphabet doivent être des entiers positifs. Taille_alphabet max = 26.\n");
         return EXIT_FAILURE;
     }
